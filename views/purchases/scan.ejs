@@ -1,0 +1,171 @@
+<%- include('../Partials/header') %>
+    <br>
+    <br>
+    <div class="container height-full">
+        <% if (typeof error !== 'undefined') { %>
+            <div role="alert" class="alert alert-danger">
+                <%= error %>
+            </div>
+        <% } %>
+
+        <div class="paper-card col-lg-10 col-md-12 mx-md-auto">
+            <h4>Scan an Item</h4>
+            <br>
+            <form id="scan-form" action="/purchases/new" method="POST">
+                
+                <div class="row form-group">
+                    <label class="col-md-3 col-sm-4" for="image">
+                        <h6>Image</h6>
+                    </label>
+                
+                    <input type="hidden" id="image" name="image" value="none">
+                    <input type="file" class="form-control col-md-9 col-sm-8" id="imageBase" name="imageBase" onchange="encodeImageFileAsURL(this)" required/>
+                    <img id="hiddenImage" class="col-md-9 col-sm-8 image-preview"/>
+                </div>
+
+                <div class="row form-group">
+                    <label class="col-md-3 col-sm-4" for="price">
+                        <h6>Price</h6>
+                    </label>
+                    <input class="col-md-9 col-sm-8" type="number" id="price" name="price" required>
+                </div>
+                <input type="hidden" id="subType" name="type" value="wishlist">
+                <input type="hidden" id="name" name="name" value="sugar">
+
+
+                <div class="row float-right">
+                    <input type="submit" id="purchase" name='purchase' class="btn btn-primary" style="display:block; margin-right: 10px;" value="Purchase Item"> 
+
+                    <input type="submit" id="wishlist" class="btn btn-success" style="display:block; margin: auto" name="wishlist" value="Add to wishlist">
+                </div>
+              
+            </form>
+        </div>
+
+    </div>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+    <script src="/js/ajaxsubmit.js"></script>
+    <script>
+        function encodeImageFileAsURL(element) {
+            var file = element.files[0];
+            var reader = new FileReader();
+            reader.onloadend = function() {
+                console.log('RESULT', reader.result)
+                const image = document.getElementById("image");
+                image.value=reader.result;
+                var preview = document.getElementById("hiddenImage");
+                preview.setAttribute("src", reader.result);
+
+                //prediction
+                $.ajax({
+                    type: "POST",
+                    url: 'http://localhost:5004/detect',
+                    data: {
+                        image: reader.result
+                    },
+                    crossDomain: true,
+                    success: function(response)
+                    {
+                        console.log("Detected: ", response['item']);
+                        $('#name').val(response['item']);
+                    }
+                });
+                
+            }
+            reader.readAsDataURL(file);
+
+            
+        }
+    </script>
+    
+    <script>
+        $(document).ready(function() {
+            var buttonpressed;
+            $('input[type=submit]').click(function() {
+                buttonpressed = $(this).attr('name'); 
+                if (buttonpressed == 'purchase') {
+                    $('#subType').val('purchase');
+                }else if (buttonpressed == 'wishlist'){
+                    $('#subType').val('wishlist');
+                }
+            })
+
+            $('#scan-form').submit(function(e) {
+                if ($('#subType').val()=='purchase'){
+                    var this_form=$(this);
+                 
+                    uname='<%= session.user.uname %>';
+                    name=$('#name').val();
+                    image=$('#image').val();
+                    price=$('#price').val();
+                    price=parseFloat(price);          
+        
+                    $.ajax({
+                        url: '/purchases/itemDetails',
+                        type: 'POST',
+                        data: jQuery.param({ uname: uname, name : name, image: image, price: price}) ,
+                        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+                        success: function (response) {
+                            console.log(name,response['name'],response['status'],response['recommendation'],response['average_price'],response['entered_price']);
+                      
+                            if (response['recommendation']==false ){
+                               alert(`This item (${name}) may be an overspend. Consider adding it to your wishlist instead.`);
+                            }
+                            prompt=confirm(`Are you sure you want to purchase this item? (${name})`);
+                                if (prompt==true){
+                                    console.log(this_form);
+                                    
+                                    $.ajax({
+                                        type: "POST",
+                                        url: this_form.attr('action'),
+                                        data: this_form.serialize(),
+                                        success: function(response)
+                                        {
+                                            console.log("Saved purchase");
+                                            window.location.href = "/";
+                                        }
+                                    });
+                                }else{
+                                    e.preventDefault();
+                                }
+                        },
+                        error: function () {
+                            alert("error");
+                            e.preventDefault();
+                        }
+                    }); 
+                    
+                 
+                }else{
+                    $(this).ajaxSubmit({
+                        error: function(xhr) {
+                            status('Error: ' + xhr.status);
+                        },
+                        success: function(response) {
+                        
+                            console.log(response);
+                        }
+                    });
+                }
+                 //Very important line, it disable the page refresh.
+                
+                return false;
+            });
+
+            // $('#wishlist').click(function() {
+            //     console.log('wish');
+            //     $('#name').val('test');
+            //     $("#scan-form").submit();
+               
+            // });
+
+            // $('#purchase').click(function() {
+            //     console.log('purchase');
+            //     alert("Implement fuctionality");
+            // });
+
+        });
+    </script>
+   
+
+   <%- include('../Partials/footer') %>

@@ -1,0 +1,181 @@
+<%- include('Partials/header') %>
+    <div class="page light">
+        <div class="search-section text-white" style="background: #2d2d2d">
+            <h1 class="font-weight-bolder">
+                <br>Welcome:  <%=session.user.full_name %>
+                <span style="padding-left:15px" class="float-right">
+            </span>
+                <span class="float-right">
+                <a href="/incident/new">
+                    <p>
+                        <!-- <button type="button" class="btn btn-outline-warning" style="margin-right: 10px;">Report an Incident</button> -->
+                        <a href='/purchases/scan' class="btn btn-outline-danger" >Scan an item</a>
+                    </p>
+                    
+                       
+                    </p>
+                </a>
+            </span>
+            </h1>
+        </div>
+        <div class="container height-full">
+            <br>
+            <div class="container">
+                <div class="row">
+                    <!-- <div class="col-md-3 mx-auto">
+                        <a href="/emergency/new">
+                            <img src="/img/emergency.png" alt="Emergency">
+                        </a>    
+                    </div>
+
+                    <div class="col-md-3 mx-auto">
+                        <a href="/incident/new">
+                            <img src="/img/incident.png" alt="Incident">
+                        </a>
+                    </div> -->
+                   
+                        <div class="col-lg-3">
+                            <div class="counter-box strawberry">
+                                <div class="p-4">
+                                    <div class="float-right" style="margin-top:10px"> <i class="material-icons alignicons" style='color:white'>star</i></div>
+                                    <div class="sc">
+                                        <%= wishlist.length %>    
+                                    </div>
+                                    <h3 class="counter-title mt-3">
+                                        <a>
+                                            <font color='white'>Wishlist</font>
+                                        </a>
+                                    </h3>
+                                </div>
+                                <div class="progress progress-xs r-0">
+                                    <div class="progress-bar" role="progressbar" style="width: 5%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-lg-3">
+                            <div class="counter-box blue1">
+                                <div class="p-4">
+                                    <div class="float-right" style="margin-top:10px"><i class="material-icons alignicons" style='color:white'>shopping_cart</i></div>
+                                    <div class="sc">
+                                        <%= purchases.length %>
+                                    </div>
+                                    <h3 class="counter-title mt-3">Purchases</h3>
+                                </div>
+                                <div class="progress progress-xs r-0">
+                                    <div class="progress-bar" role="progressbar" style="width: 5%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
+                                </div>
+                            </div>
+                        </div>
+                       
+                        <div class="col-lg-3">
+                            <div class="green counter-box">
+                                <div class="p-4">
+                                    <div class="float-right" style="margin-top:10px"><i class="material-icons alignicons" style='color:white'>photo_camera</i></div>
+                                    <h3 class="counter-title mt-3">
+                                        <a href='/purchases/scan'>
+                                            <font color='white'>Scan Item</font>
+                                        </a>
+                                    </h3>
+                                </div>
+                            </div>
+                        </div>
+
+                </div>
+
+                <br>
+                <br>
+                
+               
+                <div class="col-12 custom-scroll">
+                    <ul class="nav nav-tabs mb-3" id="myTab" role="tablist">
+                        <li class="nav-item"> <a class="nav-link active" id="home-tab" data-toggle="tab" href="#home" role="tab" aria-controls="home" aria-expanded="false">Wishlist</a>
+                        </li>
+                        <li class="nav-item"> <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="profile" aria-expanded="true">Purchases</a>
+                        </li>
+
+                    </ul>
+                    <div class="tab-content" id="myTabContent">
+                        <div role="tabpanel" class="tab-pane fade active show" id="home" aria-labelledby="home-tab" aria-expanded="false">
+                            <div class="box-tools">
+
+                                <table class="table table-hover">
+                                    <tbody>
+                                        <tr>
+                                            <th>Item</th>
+                                            <th>Image</th>
+                                            <th>Price</th>
+                                            <th>Action</th>
+                                        </tr>
+                                        <% wishlist.forEach(function(wish)  { %>
+                                            <tr>
+                                                <td>
+                                                    <a>
+                                                        <%= wish.name %>
+                                                    </a>
+                                                </td>
+                                                <td>
+                                                    <img src="<%= wish.image %>" alt="Image" height="100">
+                                                </td>
+                                                <td>
+                                                    <%= wish.price %>
+                                                </td>
+                                               
+                                                <td>
+                                                    <a href="/wishlist/delete/<%= wish._id %>">
+                                                        Delete
+                                                    </a>
+                                                </td>
+                                            </tr>
+                                            <% }) %>
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                        <div class="tab-pane fade" id="profile" role="tabpanel" aria-labelledby="profile-tab" aria-expanded="true">
+
+                            <table class="table table-hover">
+                                <tbody>
+                                    <tr>
+                                        <th>Item</th>
+                                        <th>Image</th>
+                                        <th>Price</th>
+                                        <th>Date</th>
+                                        <th>Action</th>
+                                    </tr>
+                                    <% purchases.forEach(function(purchase)  { %>
+                                        <tr>
+                                            <td>
+                                                <a>
+                                                    <%= purchase.name %>
+                                                </a>
+                                            </td>
+                                            <td>
+                                                <img src="<%= purchase.image %>" alt="Image" height="100">
+                                            </td>
+                                            <td>
+                                                <%= purchase.price %>
+                                            </td>
+                                            <td>
+                                                <%= purchase.time %>
+                                            </td>
+                                            <td>
+                                                <a href="/purchases/delete/<%= purchase._id %>">
+                                                    Delete
+                                                </a>
+                                            </td>
+                                        </tr>
+                                        <% }) %>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                    
+                </div>
+            </div>
+
+
+        </div>
+    <%- include('Partials/footer') %>

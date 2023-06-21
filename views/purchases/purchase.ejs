@@ -1,0 +1,48 @@
+<%- include('../Partials/header') %>
+
+<div class="page light">
+    <div class="container height-full">
+        <br>
+        <br>
+        <% if(notif==true) { %>
+            <div role="alert" class="alert alert-success">
+                <font color='black'>
+                    Success!
+                </font>
+
+            </div>
+        <% } %>
+        <div class="card">
+            <div class="card-header bg-dark">
+                <h5 class="card-title  text-light" style="margin-top:15px;">
+                    Incident reported by: <%= incident.uname %>  
+                </h5>
+               
+            </div>
+            <div class="card-body">
+                <%- incident.description %>
+            </div>
+            <div class="card-footer">
+                <b>Urgency</b>: <%= incident.urgency %>
+               
+            </div>
+            <div class="card-footer">
+                <b>Location</b>: <%= incident.location %>               
+            </div>
+            <div class="card-footer">
+                <b>Logged on</b>: <%= incident.time %>               
+            </div>
+            <div class="card-footer"> 
+                <img src="<%= incident.image %>">          
+            </div>
+            
+        </div>
+        <br>
+
+        <br><br>
+
+    </div>
+</div>
+
+
+<%- include('../Partials/footer') %>

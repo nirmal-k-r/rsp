@@ -1,0 +1,7 @@
+<%- include('Partials/header') %>
+<% if(session.user) { %>
+    <%- include('dashboard') %>
+<% } else { %>
+    <%- include('home') %>
+<% } %>
+<%- include('Partials/footer') %>
