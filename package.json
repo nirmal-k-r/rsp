@@ -1,10 +1,7 @@
 {
-  "name": "IMS",
+  "name": "RSP",
   "version": "0.0.1",
   "private": true,
-  "scripts": {
-    "start": "nodejs ./bin/www"
-  },
   "dependencies": {
     "bcryptjs": "^2.4.3",
     "body-parser": "^1.20.2",
